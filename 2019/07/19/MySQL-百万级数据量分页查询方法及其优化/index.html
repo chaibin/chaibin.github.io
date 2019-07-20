@@ -6,7 +6,13 @@
   <title>MySQL 百万级数据量分页查询方法及其优化 › 博客</title>
   <meta name="author" content="joker">
   
-  <meta name="description" content="撒范德萨">
+  <meta name="description" content="原生查询
+1234select * from table_name order by id limit M,N适应场景：数据量较少缺点：  可能全表扫描
+
+** 试验  200W数据表**
+select * from user_test  limit 1000000,20;
+执行时间 1.7s
+se">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -61,8 +67,24 @@
     </header>
     <div class="entry">
       
-        <p>撒范德萨</p>
+        <p><strong>原生查询</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from table_name order by id limit M,N</span><br><span class="line"></span><br><span class="line">适应场景：数据量较少</span><br><span class="line">缺点：  可能全表扫描</span><br></pre></td></tr></table></figure>
 
+<p>** 试验  200W数据表**</p>
+<pre><code>select * from user_test  limit 1000000,20;
+执行时间 1.7s
+select * from user_test  limit 1500000,20;
+执行时间 2.6s
+
+随偏移量越大，mysql查询效率越低，执行全表扫描</code></pre><p><img src="/images/pasted-1.png" alt="upload successful"></p>
+<p>** 优化方案 **</p>
+<pre><code>覆盖索引
+select id from user_test  limit 1000000,20;
+执行时间： 0.2
+select id from user_test  limit 1500000,20;
+执行时间： 0.38
+select id from user_test order by  id  asc limit 1500000,20;
+执行时间 0.6 添加排序后更慢</code></pre>
       
     </div>
       
