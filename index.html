@@ -47,24 +47,27 @@
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
   <article class="post">
+
   <div class="post-content">
     <header>
       
   
-    <h1 class="title"><a href="/2019/07/22/mysql事务隔离级别/">mysql事务隔离级别</a></h1>
+    <h1 class="title"><a href="/2019/07/22/mysql事务隔离级别/">mysql事务（1）：四种隔离级别</a></h1>
   
 
       
-        <time datetime="2019-07-22T02:02:15.000Z">2019-07-22</time>
+        <time datetime="2019-07-22T02:02:00.000Z">2019-07-22</time>
       
     </header>
     <div class="entry">
+<!-- Table of Contents -->
+
       
-        <h2 id="mysql-四种事务隔离级别实验"><a href="#mysql-四种事务隔离级别实验" class="headerlink" title="mysql 四种事务隔离级别实验"></a>mysql 四种事务隔离级别实验</h2><p><strong>数据库四种事务级别</strong></p>
+        <p><strong>数据库四种事务级别</strong></p>
 <ul>
 <li><font color="red">RU-未提交读(Read Uncommitted)：</font>允许脏读，也就是可能读取到其他会话中未提交事务修改的数据。</li>
 <li><font color="red">RC-提交读(Read Committed)：</font>只能读取到已经提交的数据，Oracle等多数数据库默认都是该级别。</li>
-<li><font color="red">RR-可重复读(Repeated Read)：</font>可重复读。在同一个事务内的查询都是事务开始时刻一致的，InnoDB默认级别。在SQL标准中，该隔离级别消除了不可重复读，但是还存在幻读。</li>
+<li><font color="red">RR-可重复读(Repeatable Read)：</font>可重复读。在同一个事务内的查询都是事务开始时刻一致的，InnoDB默认级别。在SQL标准中，该隔离级别消除了不可重复读，但是还存在幻读。</li>
 <li><font color="red">S-串行读(Serializable)：</font>完全串行化的读，每次读都需要获得表级共享锁，读写相互都会阻塞。</li>
 </ul>
 <hr>
@@ -77,7 +80,7 @@
 <p>select @@global.tx_isolation;</p>
 </li>
 <li><p>设置当前会话隔离级别</p>
-<p> set session transaction isolatin level repeatable read;</p>
+<p> set session transaction isolatin level repeatable read|;</p>
 </li>
 <li><p>设置系统当前隔离级别</p>
 <p> set global transaction isolation level repeatable<br>read;</p>
@@ -91,7 +94,14 @@
 <p><img src="/images/pasted-3.png" alt="upload successful"></p>
 <p><strong>事务2-可以查到</strong><br><img src="/images/pasted-4.png" alt="upload successful"></p>
 <p><font color="red"></font></p>
-<pre><code>发生脏读：事务2读取到 事务1未提交数据，</code></pre><h3 id="读已经提交"><a href="#读已经提交" class="headerlink" title="读已经提交"></a>读已经提交</h3><blockquote>
+<pre><code>发生脏读：事务2读取到 事务1未提交数据</code></pre><hr>
+<h3 id="读已经提交"><a href="#读已经提交" class="headerlink" title="读已经提交"></a>读已经提交</h3><p>设置提交读，此时不会出现脏读，但是会出现不可重复读</p>
+<p>** 事务1**<br><img src="/images/pasted-7.png" alt="upload successful"><br>此时 事务2 读取正确，但是如果事务1commit后，事务2再读取 则会导致两次读取不一致，如图所示</p>
+<p><img src="/images/pasted-8.png" alt="upload successful"></p>
+<p>设置可重复读隔离级别repeatable read，可解决该问题</p>
+<h3 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h3><p><img src="/images/pasted-9.png" alt="upload successful"></p>
+<p>事务2 进行中时候提交事务1 写操作 ，事务2未受影响</p>
+<blockquote>
 <blockquote>
 <p>参考 <a href="https://segmentfault.com/a/1190000010561284" target="_blank" rel="noopener">https://segmentfault.com/a/1190000010561284</a></p>
 </blockquote>
@@ -113,6 +123,7 @@
 
 
   <article class="post">
+
   <div class="post-content">
     <header>
       
@@ -125,6 +136,8 @@
       
     </header>
     <div class="entry">
+<!-- Table of Contents -->
+
       
         <p><strong>原生查询</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from table_name order by id limit M,N</span><br><span class="line"></span><br><span class="line">适应场景：数据量较少</span><br><span class="line">缺点：  可能全表扫描</span><br></pre></td></tr></table></figure>
@@ -162,6 +175,7 @@ select * from user_test where id &gt;= (select id from user_test  limit 1500000,
 
 
   <article class="post">
+
   <div class="post-content">
     <header>
       
@@ -174,6 +188,8 @@ select * from user_test where id &gt;= (select id from user_test  limit 1500000,
       
     </header>
     <div class="entry">
+<!-- Table of Contents -->
+
       
         <h2 id="HEXO-博客搭建记录"><a href="#HEXO-博客搭建记录" class="headerlink" title="HEXO 博客搭建记录"></a>HEXO 博客搭建记录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo+hexo-admin 好用的</span><br></pre></td></tr></table></figure>
       
@@ -211,7 +227,7 @@ select * from user_test where id &gt;= (select id from user_test  limit 1500000,
   <ul class="entry">
     
       <li>
-        <a href="/2019/07/22/mysql事务隔离级别/">mysql事务隔离级别</a>
+        <a href="/2019/07/22/mysql事务隔离级别/">mysql事务（1）：四种隔离级别</a>
       </li>
     
       <li>
@@ -235,6 +251,8 @@ select * from user_test where id &gt;= (select id from user_test  limit 1500000,
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
+    <li><a href="/categories/数据库/">数据库</a><small>1</small></li>
+  
   </ul>
 </div>
 
@@ -243,7 +261,7 @@ select * from user_test where id &gt;= (select id from user_test  limit 1500000,
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/mysql/" style="font-size: 10px;">mysql</a> <a href="/tags/大数据/" style="font-size: 10px;">大数据</a> <a href="/tags/工具使用/" style="font-size: 10px;">工具使用</a>
+    <a href="/tags/mysql/" style="font-size: 20px;">mysql</a> <a href="/tags/事务隔离级别/" style="font-size: 10px;">事务隔离级别</a> <a href="/tags/大数据/" style="font-size: 10px;">大数据</a> <a href="/tags/工具使用/" style="font-size: 10px;">工具使用</a>
   </div>
 </div>
 
